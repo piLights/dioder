@@ -1,7 +1,7 @@
 //Most parts of this file are taken from Lakrizz' example on GitHub
 // https://github.com/lakrizz/go-pidioder/blob/master/main.go
 
-package didoer
+package dioder
 
 import (
 	"bufio"
