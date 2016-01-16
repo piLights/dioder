@@ -17,9 +17,9 @@ const (
 )
 
 var (
-	currentRed   int
-	currentGreen int
-	currentBlue  int
+	currentRed   uint8
+	currentGreen uint8
+	currentBlue  uint8
 )
 
 func floatToString(floatValue float64) string {
@@ -50,7 +50,7 @@ func setColor(channel string, value float64) error {
 	return nil
 }
 
-func setChannelInteger(value int, channel string) error {
+func setChannelInteger(value uint8, channel string) error {
 	if value > 255 {
 		return errors.New("Value can not be over 255")
 	}
@@ -67,14 +67,14 @@ func setChannelInteger(value int, channel string) error {
 }
 
 // SetAll sets the given values for the channels
-func SetAll(r, g, b int) {
+func SetAll(r, g, b uint8) {
 	SetRed(r)
 	SetGreen(g)
 	SetBlue(b)
 }
 
 // SetRed sets the given value on the Red channel
-func SetRed(value int) error {
+func SetRed(value uint8) error {
 	// Do nothing if the new value is the same as the old
 	if value == currentRed {
 		return nil
@@ -85,7 +85,7 @@ func SetRed(value int) error {
 }
 
 // SetGreen sets the given value on the Green channel
-func SetGreen(value int) error {
+func SetGreen(value uint8) error {
 	// Do nothing if the new value is the same as the old
 	if value == currentGreen {
 		return nil
@@ -96,7 +96,7 @@ func SetGreen(value int) error {
 }
 
 // SetBlue sets the given value on the Blue channel
-func SetBlue(value int) error {
+func SetBlue(value uint8) error {
 	// Do nothing if the new value is the same as the old
 	if value == currentBlue {
 		return nil
