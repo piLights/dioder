@@ -1,4 +1,4 @@
-//Most parts of this file are taken from Lakrizz' example on GitHub
+// Some parts of this file are taken from Lakrizz' example on GitHub
 // https://github.com/lakrizz/go-pidioder/blob/master/main.go
 
 package dioder
@@ -16,11 +16,7 @@ const (
 	greenPin = "4"
 )
 
-var (
-	currentRed   uint8
-	currentGreen uint8
-	currentBlue  uint8
-)
+var currentColorList [3]uint8
 
 func floatToString(floatValue float64) string {
 	return strconv.FormatFloat(floatValue, 'f', 6, 64)
@@ -76,32 +72,37 @@ func SetAll(r, g, b uint8) {
 // SetRed sets the given value on the Red channel
 func SetRed(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentRed {
+	if value == currentColorList[0] {
 		return nil
 	}
 
-	currentRed = value
+	currentColorList[0] = value
 	return setChannelInteger(value, redPin)
 }
 
 // SetGreen sets the given value on the Green channel
 func SetGreen(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentGreen {
+	if value == currentColorList[1] {
 		return nil
 	}
 
-	currentGreen = value
+	currentColorList[1] = value
 	return setChannelInteger(value, greenPin)
 }
 
 // SetBlue sets the given value on the Blue channel
 func SetBlue(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentBlue {
+	if value == currentColorList[2] {
 		return nil
 	}
 
-	currentBlue = value
+	currentColorList[2] = value
 	return setChannelInteger(value, bluePin)
+}
+
+// GetCurrentColor returns the current color
+func GetCurrentColor() [3]uint8 {
+	return currentColorList
 }
