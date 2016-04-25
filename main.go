@@ -6,6 +6,7 @@ package dioder
 import (
 	"bufio"
 	"errors"
+	"image/color"
 	"os"
 	"strconv"
 )
@@ -16,7 +17,7 @@ var (
 	greenPin = "4"
 )
 
-var currentColorList [3]uint8
+var currentColorConfiguration color.RGBA
 
 func floatToString(floatValue float64) string {
 	return strconv.FormatFloat(floatValue, 'f', 6, 64)
@@ -63,42 +64,42 @@ func setChannelInteger(value uint8, channel string) error {
 }
 
 // SetAll sets the given values for the channels
-func SetAll(r, g, b uint8) {
-	SetRed(r)
-	SetGreen(g)
-	SetBlue(b)
+func SetAll(colorSet color.RGBA) {
+	SetRed(colorSet.R)
+	SetGreen(colorSet.G)
+	SetBlue(colorSet.B)
 }
 
 // SetRed sets the given value on the Red channel
 func SetRed(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentColorList[0] {
+	if value == currentColorConfiguration.R {
 		return nil
 	}
 
-	currentColorList[0] = value
+	currentColorConfiguration.R = value
 	return setChannelInteger(value, redPin)
 }
 
 // SetGreen sets the given value on the Green channel
 func SetGreen(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentColorList[1] {
+	if value == currentColorConfiguration.G {
 		return nil
 	}
 
-	currentColorList[1] = value
+	currentColorConfiguration.G = value
 	return setChannelInteger(value, greenPin)
 }
 
 // SetBlue sets the given value on the Blue channel
 func SetBlue(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentColorList[2] {
+	if value == currentColorConfiguration.B {
 		return nil
 	}
 
-	currentColorList[2] = value
+	currentColorConfiguration.B = value
 	return setChannelInteger(value, bluePin)
 }
 
@@ -109,6 +110,6 @@ func SetPins(red, green, blue int) {
 }
 
 // GetCurrentColor returns the current color
-func GetCurrentColor() [3]uint8 {
-	return currentColorList
+func GetCurrentColor() color.RGBA {
+	return currentColorConfiguration
 }
