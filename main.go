@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-const (
+var (
 	redPin   = "18"
 	bluePin  = "17"
 	greenPin = "4"
@@ -100,6 +100,12 @@ func SetBlue(value uint8) error {
 
 	currentColorList[2] = value
 	return setChannelInteger(value, bluePin)
+}
+
+func SetPins(red, green, blue int) {
+	redPin = strconv.Itoa(red)
+	greenPin = strconv.Itoa(green)
+	bluePin = strconv.Itoa(blue)
 }
 
 // GetCurrentColor returns the current color
