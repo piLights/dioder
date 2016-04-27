@@ -25,8 +25,12 @@ type Dioder struct {
 }
 
 //New creates a new instance
-func (d *Dioder) New(pinConfiguration Pins) {
+func New(pinConfiguration Pins) Dioder {
+	d := Dioder{}
+
 	d.SetPins(pinConfiguration)
+
+	return d
 }
 
 // GetCurrentColor returns the current color
