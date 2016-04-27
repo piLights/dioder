@@ -68,6 +68,8 @@ func SetAll(colorSet color.RGBA) {
 	SetRed(colorSet.R)
 	SetGreen(colorSet.G)
 	SetBlue(colorSet.B)
+
+	currentColorConfiguration = colorSet
 }
 
 // SetRed sets the given value on the Red channel
