@@ -116,3 +116,16 @@ func SetRed(value uint8) error {
 	currentColorConfiguration.R = value
 	return setChannelInteger(value, redPin)
 }
+
+//TurnOff turns off the dioder-strips and saves the current configuration
+func TurnOff() {
+	//Temporary save the configuration
+	configuration := currentColorConfiguration
+	SetAll(color.RGBA{})
+	currentColorConfiguration = configuration
+}
+
+//TurnOn turns the dioder-strips on and restores the previous configuration
+func TurnOn() {
+	SetAll(currentColorConfiguration)
+}
