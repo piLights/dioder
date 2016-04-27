@@ -13,9 +13,9 @@ import (
 
 //Pins the numbers of the RGB-pins
 type Pins struct {
-	Red   uint8
-	Green uint8
-	Blue  uint8
+	Red   string
+	Green string
+	Blue  string
 }
 
 //Dioder the main structure
@@ -36,9 +36,9 @@ func (d *Dioder) GetCurrentColor() color.RGBA {
 
 // SetAll sets the given values for the channels
 func (d *Dioder) SetAll(colorSet color.RGBA) {
-	SetRed(colorSet.R)
-	SetGreen(colorSet.G)
-	SetBlue(colorSet.B)
+	d.SetRed(colorSet.R)
+	d.SetGreen(colorSet.G)
+	d.SetBlue(colorSet.B)
 
 	d.ColorConfiguration = colorSet
 }
@@ -85,7 +85,7 @@ func (d *Dioder) SetRed(value uint8) error {
 func (d *Dioder) TurnOff() {
 	//Temporary save the configuration
 	configuration := d.ColorConfiguration
-	SetAll(color.RGBA{})
+	d.SetAll(color.RGBA{})
 	d.ColorConfiguration = configuration
 }
 
