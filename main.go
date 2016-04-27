@@ -11,14 +11,6 @@ import (
 	"strconv"
 )
 
-var (
-	redPin   = "18"
-	bluePin  = "17"
-	greenPin = "4"
-)
-
-var currentColorConfiguration color.RGBA
-
 //Pins the numbers of the RGB-pins
 type Pins struct {
 	Red   uint8
@@ -48,64 +40,62 @@ func (d *Dioder) SetAll(colorSet color.RGBA) {
 	SetGreen(colorSet.G)
 	SetBlue(colorSet.B)
 
-	currentColorConfiguration = colorSet
+	d.ColorConfiguration = colorSet
 }
 
 // SetBlue sets the given value on the Blue channel
 func (d *Dioder) SetBlue(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.B {
+	if value == d.ColorConfiguration.B {
 		return nil
 	}
 
-	currentColorConfiguration.B = value
-	return setChannelInteger(value, bluePin)
+	d.ColorConfiguration.B = value
+	return setChannelInteger(value, d.PinConfiguration.Blue)
 }
 
 // SetGreen sets the given value on the Green channel
 func (d *Dioder) SetGreen(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.G {
+	if value == d.ColorConfiguration.G {
 		return nil
 	}
 
-	currentColorConfiguration.G = value
-	return setChannelInteger(value, greenPin)
+	d.ColorConfiguration.G = value
+	return setChannelInteger(value, d.PinConfiguration.Green)
 }
 
 //SetPins configures the pin-layout
-func (d *Dioder) SetPins(red, green, blue int) {
-	redPin = strconv.Itoa(red)
-	greenPin = strconv.Itoa(green)
-	bluePin = strconv.Itoa(blue)
+func (d *Dioder) SetPins(pinConfiguration Pins) {
+	d.PinConfiguration = pinConfiguration
 }
 
 // SetRed sets the given value on the Red channel
 func (d *Dioder) SetRed(value uint8) error {
 	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.R {
+	if value == d.ColorConfiguration.R {
 		return nil
 	}
 
-	currentColorConfiguration.R = value
-	return setChannelInteger(value, redPin)
+	d.ColorConfiguration.R = value
+	return setChannelInteger(value, d.PinConfiguration.Red)
 }
 
 //TurnOff turns off the dioder-strips and saves the current configuration
 func (d *Dioder) TurnOff() {
 	//Temporary save the configuration
-	configuration := currentColorConfiguration
+	configuration := d.ColorConfiguration
 	SetAll(color.RGBA{})
-	currentColorConfiguration = configuration
+	d.ColorConfiguration = configuration
 }
 
 //TurnOn turns the dioder-strips on and restores the previous configuration
 func (d *Dioder) TurnOn() {
-	if currentColorConfiguration.A == 0 && currentColorConfiguration.B == 0 && currentColorConfiguration.G == 0 && currentColorConfiguration.R == 0 {
-		currentColorConfiguration = color.RGBA{255, 255, 255, 100}
+	if d.ColorConfiguration.A == 0 && d.ColorConfiguration.B == 0 && d.ColorConfiguration.G == 0 && d.ColorConfiguration.R == 0 {
+		d.ColorConfiguration = color.RGBA{255, 255, 255, 100}
 	}
 
-	SetAll(currentColorConfiguration)
+	d.SetAll(d.ColorConfiguration)
 }
 
 func floatToString(floatValue float64) string {
@@ -150,70 +140,4 @@ func setChannelInteger(value uint8, channel string) error {
 	setColor(channel, float64(floatval))
 
 	return nil
-}
-
-// SetAll sets the given values for the channels
-func SetAll(colorSet color.RGBA) {
-	SetRed(colorSet.R)
-	SetGreen(colorSet.G)
-	SetBlue(colorSet.B)
-
-	currentColorConfiguration = colorSet
-}
-
-// SetBlue sets the given value on the Blue channel
-func SetBlue(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.B {
-		return nil
-	}
-
-	currentColorConfiguration.B = value
-	return setChannelInteger(value, bluePin)
-}
-
-// SetGreen sets the given value on the Green channel
-func SetGreen(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.G {
-		return nil
-	}
-
-	currentColorConfiguration.G = value
-	return setChannelInteger(value, greenPin)
-}
-
-//SetPins configures the pin-layout
-func SetPins(red, green, blue int) {
-	redPin = strconv.Itoa(red)
-	greenPin = strconv.Itoa(green)
-	bluePin = strconv.Itoa(blue)
-}
-
-// SetRed sets the given value on the Red channel
-func SetRed(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.R {
-		return nil
-	}
-
-	currentColorConfiguration.R = value
-	return setChannelInteger(value, redPin)
-}
-
-//TurnOff turns off the dioder-strips and saves the current configuration
-func TurnOff() {
-	//Temporary save the configuration
-	configuration := currentColorConfiguration
-	SetAll(color.RGBA{})
-	currentColorConfiguration = configuration
-}
-
-//TurnOn turns the dioder-strips on and restores the previous configuration
-func TurnOn() {
-	if currentColorConfiguration.A == 0 && currentColorConfiguration.B == 0 && currentColorConfiguration.G == 0 && currentColorConfiguration.R == 0 {
-		currentColorConfiguration = color.RGBA{255, 255, 255, 100}
-	}
-
-	SetAll(currentColorConfiguration)
 }
