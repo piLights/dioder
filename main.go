@@ -63,6 +63,11 @@ func setChannelInteger(value uint8, channel string) error {
 	return nil
 }
 
+// GetCurrentColor returns the current color
+func GetCurrentColor() color.RGBA {
+	return currentColorConfiguration
+}
+
 // SetAll sets the given values for the channels
 func SetAll(colorSet color.RGBA) {
 	SetRed(colorSet.R)
@@ -70,28 +75,6 @@ func SetAll(colorSet color.RGBA) {
 	SetBlue(colorSet.B)
 
 	currentColorConfiguration = colorSet
-}
-
-// SetRed sets the given value on the Red channel
-func SetRed(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.R {
-		return nil
-	}
-
-	currentColorConfiguration.R = value
-	return setChannelInteger(value, redPin)
-}
-
-// SetGreen sets the given value on the Green channel
-func SetGreen(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == currentColorConfiguration.G {
-		return nil
-	}
-
-	currentColorConfiguration.G = value
-	return setChannelInteger(value, greenPin)
 }
 
 // SetBlue sets the given value on the Blue channel
@@ -105,13 +88,31 @@ func SetBlue(value uint8) error {
 	return setChannelInteger(value, bluePin)
 }
 
+// SetGreen sets the given value on the Green channel
+func SetGreen(value uint8) error {
+	// Do nothing if the new value is the same as the old
+	if value == currentColorConfiguration.G {
+		return nil
+	}
+
+	currentColorConfiguration.G = value
+	return setChannelInteger(value, greenPin)
+}
+
+//SetPins configures the pin-layout
 func SetPins(red, green, blue int) {
 	redPin = strconv.Itoa(red)
 	greenPin = strconv.Itoa(green)
 	bluePin = strconv.Itoa(blue)
 }
 
-// GetCurrentColor returns the current color
-func GetCurrentColor() color.RGBA {
-	return currentColorConfiguration
+// SetRed sets the given value on the Red channel
+func SetRed(value uint8) error {
+	// Do nothing if the new value is the same as the old
+	if value == currentColorConfiguration.R {
+		return nil
+	}
+
+	currentColorConfiguration.R = value
+	return setChannelInteger(value, redPin)
 }
