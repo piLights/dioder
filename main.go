@@ -127,7 +127,7 @@ func TurnOff() {
 
 //TurnOn turns the dioder-strips on and restores the previous configuration
 func TurnOn() {
-	if currentColorConfiguration.A == 0 && currentColorConfiguration.B == 0 && currentColorConfiguration.G == 0 && currentColorConfiguration.R {
+	if currentColorConfiguration.A == 0 && currentColorConfiguration.B == 0 && currentColorConfiguration.G == 0 && currentColorConfiguration.R == 0 {
 		currentColorConfiguration = color.RGBA{255, 255, 255, 100}
 	}
 
