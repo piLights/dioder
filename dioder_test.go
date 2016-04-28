@@ -1,9 +1,16 @@
 package dioder
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestNew(t *testing.T) {
-	t.SkipNow()
+	d := New(Pins{}, "")
+
+	if reflect.TypeOf(d).String() != "dioder.Dioder" {
+		t.Errorf("Got wrong dioder.Dioder object: %s", reflect.TypeOf(d))
+	}
 }
 
 func TestDioderGetCurrentColor(t *testing.T) {
