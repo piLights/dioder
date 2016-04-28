@@ -7,7 +7,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestDioderGetCurrentColor(t *testing.T) {
-	dioder := New(Pins{"18", "17", "4"})
+	dioder := New(Pins{"18", "17", "4"}, "/dev/pi-blaster")
 
 	colorSet := dioder.GetCurrentColor()
 
@@ -31,9 +31,13 @@ func TestDioderGetCurrentColor(t *testing.T) {
 func TestDioderPinConfiguration(t *testing.T) {
 	pinConfiguration := Pins{"18", "17", "4"}
 
-	dioder := New(pinConfiguration)
+	dioder := New(pinConfiguration, "/dev/pi-blaster")
 
 	if dioder.PinConfiguration != pinConfiguration {
 		t.Errorf("Pins are not correctly configured. Gave %s, got %s", pinConfiguration, dioder.PinConfiguration)
+	}
+
+	if dioder.PiBlaster != "/dev/pi-blaster" {
+		t.Errorf("Pi-Blaster file wrong configured. Gave /dev/pi-blaster, got %s", dioder.PiBlaster)
 	}
 }
