@@ -2,15 +2,22 @@ package dioder
 
 import (
 	"image/color"
+	"reflect"
 	"testing"
 )
 
+var piBlasterFile = "/dev/pi-blaster"
+
 func TestNew(t *testing.T) {
-	t.SkipNow()
+	d := New(Pins{}, "")
+
+	if reflect.TypeOf(d).String() != "dioder.Dioder" {
+		t.Errorf("Got wrong dioder.Dioder object: %s", reflect.TypeOf(d))
+	}
 }
 
 func TestDioderGetCurrentColor(t *testing.T) {
-	dioder := New(Pins{"18", "17", "4"})
+	dioder := New(Pins{"18", "17", "4"}, "/dev/pi-blaster")
 
 	colorSet := dioder.GetCurrentColor()
 
@@ -34,15 +41,19 @@ func TestDioderGetCurrentColor(t *testing.T) {
 func TestDioderPinConfiguration(t *testing.T) {
 	pinConfiguration := Pins{"18", "17", "4"}
 
-	dioder := New(pinConfiguration)
+	dioder := New(pinConfiguration, "/dev/pi-blaster")
 
 	if dioder.PinConfiguration != pinConfiguration {
 		t.Errorf("Pins are not correctly configured. Gave %s, got %s", pinConfiguration, dioder.PinConfiguration)
 	}
+
+	if dioder.PiBlaster != "/dev/pi-blaster" {
+		t.Errorf("Pi-Blaster file wrong configured. Gave /dev/pi-blaster, got %s", dioder.PiBlaster)
+	}
 }
 
 func TestDioderSetAll(t *testing.T) {
-	d := New(Pins{})
+	d := New(Pins{}, "/dev/pi-blaster")
 
 	d.SetAll(color.RGBA{})
 
@@ -64,7 +75,7 @@ func TestDioderSetAll(t *testing.T) {
 }
 
 func TestDioderSetPins(t *testing.T) {
-	d := New(Pins{"1", "2", "3"})
+	d := New(Pins{"1", "2", "3"}, "/dev/pi-blaster")
 
 	if d.PinConfiguration.Blue != "3" {
 		t.Error("Blue pin is not correct")

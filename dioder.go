@@ -22,13 +22,19 @@ type Pins struct {
 type Dioder struct {
 	PinConfiguration   Pins
 	ColorConfiguration color.RGBA
+	PiBlaster          string
 }
 
 //New creates a new instance
-func New(pinConfiguration Pins) Dioder {
+func New(pinConfiguration Pins, piBlasterFile string) Dioder {
+	if piBlasterFile == "" {
+		piBlasterFile = "/dev/pi-blaster"
+	}
+
 	d := Dioder{}
 
 	d.SetPins(pinConfiguration)
+	d.PiBlaster = piBlasterFile
 
 	return d
 }
@@ -55,7 +61,7 @@ func (d *Dioder) SetBlue(value uint8) error {
 	}
 
 	d.ColorConfiguration.B = value
-	return setChannelInteger(value, d.PinConfiguration.Blue)
+	return d.SetChannelInteger(value, d.PinConfiguration.Blue)
 }
 
 // SetGreen sets the given value on the Green channel
@@ -66,7 +72,7 @@ func (d *Dioder) SetGreen(value uint8) error {
 	}
 
 	d.ColorConfiguration.G = value
-	return setChannelInteger(value, d.PinConfiguration.Green)
+	return d.SetChannelInteger(value, d.PinConfiguration.Green)
 }
 
 //SetPins configures the pin-layout
@@ -82,7 +88,7 @@ func (d *Dioder) SetRed(value uint8) error {
 	}
 
 	d.ColorConfiguration.R = value
-	return setChannelInteger(value, d.PinConfiguration.Red)
+	return d.SetChannelInteger(value, d.PinConfiguration.Red)
 }
 
 //TurnOff turns off the dioder-strips and saves the current configuration
@@ -106,10 +112,11 @@ func floatToString(floatValue float64) string {
 	return strconv.FormatFloat(floatValue, 'f', 6, 64)
 }
 
-func setColor(channel string, value float64) error {
+//SetColor Sets a color on the given channel
+func (d *Dioder) SetColor(channel string, value float64) error {
 	piBlasterCommand := channel + "=" + floatToString(value) + "\n"
 
-	file, error := os.OpenFile("/dev/pi-blaster", os.O_RDWR, os.ModeNamedPipe)
+	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
 
 	if error != nil {
 		panic(error)
@@ -130,7 +137,8 @@ func setColor(channel string, value float64) error {
 	return nil
 }
 
-func setChannelInteger(value uint8, channel string) error {
+//SetChannelInteger check if the value is in the correct range and convert it to float64
+func (d *Dioder) SetChannelInteger(value uint8, channel string) error {
 	if value > 255 {
 		return errors.New("Value can not be over 255")
 	}
@@ -141,7 +149,7 @@ func setChannelInteger(value uint8, channel string) error {
 
 	floatval := float64(value) / 255.0
 
-	setColor(channel, float64(floatval))
+	d.SetColor(channel, float64(floatval))
 
 	return nil
 }
