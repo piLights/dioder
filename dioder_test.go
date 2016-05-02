@@ -17,7 +17,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestDioderGetCurrentColor(t *testing.T) {
-	dioder := New(Pins{"18", "17", "4"}, "/dev/pi-blaster")
+	dioder := New(Pins{"18", "17", "4"}, piBlasterFile)
 
 	colorSet := dioder.GetCurrentColor()
 
@@ -41,7 +41,7 @@ func TestDioderGetCurrentColor(t *testing.T) {
 func TestDioderPinConfiguration(t *testing.T) {
 	pinConfiguration := Pins{"18", "17", "4"}
 
-	dioder := New(pinConfiguration, "/dev/pi-blaster")
+	dioder := New(pinConfiguration, piBlasterFile)
 
 	if dioder.PinConfiguration != pinConfiguration {
 		t.Errorf("Pins are not correctly configured. Gave %s, got %s", pinConfiguration, dioder.PinConfiguration)
@@ -75,7 +75,7 @@ func TestDioderSetAll(t *testing.T) {
 }
 
 func TestDioderSetPins(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, "/dev/pi-blaster")
+	d := New(Pins{"1", "2", "3"}, piBlasterFile)
 
 	if d.PinConfiguration.Blue != "3" {
 		t.Error("Blue pin is not correct")
@@ -87,5 +87,37 @@ func TestDioderSetPins(t *testing.T) {
 
 	if d.PinConfiguration.Red != "1" {
 		t.Error("Red pin is not correct")
+	}
+}
+
+func TestDidoerTurnOff(t *testing.T) {
+	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+
+	configuration := d.ColorConfiguration
+
+	d.TurnOff()
+
+	if d.ColorConfiguration != configuration {
+		t.Errorf("Didn't saved the current settings, had %d - got %d", configuration, d.ColorConfiguration)
+	}
+}
+
+func TestDioderTurnOn(t *testing.T) {
+	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+
+	d.TurnOff()
+	d.TurnOn()
+
+	if d.ColorConfiguration.A != 255 {
+		t.Errorf("Value for opacity is wrong. Expected 0, got %d", d.ColorConfiguration.A)
+	}
+	if d.ColorConfiguration.R != 255 {
+		t.Errorf("Value for red is wrong. Expected 0, got %d", d.ColorConfiguration.R)
+	}
+	if d.ColorConfiguration.G != 255 {
+		t.Errorf("Value for green is wrong. Expected 0, got %d", d.ColorConfiguration.G)
+	}
+	if d.ColorConfiguration.B != 255 {
+		t.Errorf("Value for blue is wrong. Expected 0, got %d", d.ColorConfiguration.B)
 	}
 }
