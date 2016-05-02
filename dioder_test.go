@@ -108,7 +108,7 @@ func TestDioderTurnOn(t *testing.T) {
 	d.TurnOff()
 	d.TurnOn()
 
-	if d.ColorConfiguration.A != 255 {
+	if d.ColorConfiguration.A != 100 {
 		t.Errorf("Value for opacity is wrong. Expected 0, got %d", d.ColorConfiguration.A)
 	}
 	if d.ColorConfiguration.R != 255 {
