@@ -105,7 +105,12 @@ func (d *Dioder) TurnOn() {
 		d.ColorConfiguration = color.RGBA{255, 255, 255, 100}
 	}
 
-	d.SetAll(d.ColorConfiguration)
+	//@ToDo: Refactor
+	//Ugliy hack, to turn the lights back on
+	colorSet := d.ColorConfiguration
+	d.ColorConfiguration = color.RGBA{}
+
+	d.SetAll(colorSet)
 }
 
 func floatToString(floatValue float64) string {
