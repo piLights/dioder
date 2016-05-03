@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-var piBlasterFile = "/dev/pi-blaster"
+var piBlasterFile = "/tmp/pi-blaster"
 
 func TestNew(t *testing.T) {
 	d := New(Pins{}, "")

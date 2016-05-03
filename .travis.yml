@@ -5,6 +5,7 @@ go:
 before_install:
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
+  - mkfifo /tmp/pi-blaster
 script:
   - go test -v ./...
   - $HOME/gopath/bin/goveralls -service=travis-ci
