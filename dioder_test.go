@@ -47,8 +47,8 @@ func TestDioderPinConfiguration(t *testing.T) {
 		t.Errorf("Pins are not correctly configured. Gave %s, got %s", pinConfiguration, dioder.PinConfiguration)
 	}
 
-	if dioder.PiBlaster != "/dev/pi-blaster" {
-		t.Errorf("Pi-Blaster file wrong configured. Gave /dev/pi-blaster, got %s", dioder.PiBlaster)
+	if dioder.PiBlaster != piBlasterFile {
+		t.Errorf("Pi-Blaster file wrong configured. Gave %s, got %s", piBlasterFile, dioder.PiBlaster)
 	}
 }
 
