@@ -46,49 +46,27 @@ func (d *Dioder) GetCurrentColor() color.RGBA {
 
 // SetAll sets the given values for the channels
 func (d *Dioder) SetAll(colorSet color.RGBA) {
-	d.SetRed(colorSet.R)
-	d.SetGreen(colorSet.G)
-	d.SetBlue(colorSet.B)
+	//Red
+	if colorSet.R != d.ColorConfiguration.R {
+		d.SetChannelInteger(calculateOpacity(colorSet.R, colorSet.A), d.PinConfiguration.Red)
+	}
+
+	//Green
+	if colorSet.G != d.ColorConfiguration.G {
+		d.SetChannelInteger(calculateOpacity(colorSet.G, colorSet.A), d.PinConfiguration.Green)
+	}
+
+	//Blue
+	if colorSet.B != d.ColorConfiguration.B {
+		d.SetChannelInteger(calculateOpacity(colorSet.B, colorSet.A), d.PinConfiguration.Blue)
+	}
 
 	d.ColorConfiguration = colorSet
-}
-
-// SetBlue sets the given value on the Blue channel
-func (d *Dioder) SetBlue(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == d.ColorConfiguration.B {
-		return nil
-	}
-
-	d.ColorConfiguration.B = value
-	return d.SetChannelInteger(value, d.PinConfiguration.Blue)
-}
-
-// SetGreen sets the given value on the Green channel
-func (d *Dioder) SetGreen(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == d.ColorConfiguration.G {
-		return nil
-	}
-
-	d.ColorConfiguration.G = value
-	return d.SetChannelInteger(value, d.PinConfiguration.Green)
 }
 
 //SetPins configures the pin-layout
 func (d *Dioder) SetPins(pinConfiguration Pins) {
 	d.PinConfiguration = pinConfiguration
-}
-
-// SetRed sets the given value on the Red channel
-func (d *Dioder) SetRed(value uint8) error {
-	// Do nothing if the new value is the same as the old
-	if value == d.ColorConfiguration.R {
-		return nil
-	}
-
-	d.ColorConfiguration.R = value
-	return d.SetChannelInteger(value, d.PinConfiguration.Red)
 }
 
 //TurnOff turns off the dioder-strips and saves the current configuration
@@ -157,4 +135,35 @@ func (d *Dioder) SetChannelInteger(value uint8, channel string) error {
 	d.SetColor(channel, float64(floatval))
 
 	return nil
+}
+
+/*func (d *Dioder) fade(currentValue uint8, targetValue uint8, fadeTime time.Duration, channel string) {
+	//Fade:
+	//Einteilung der Werteminderung pro Zeiteinheit anhand der Werte zwischen currentValue und targetValue
+	var neededSteps uint8
+
+	if currentValue < targetValue {
+		neededSteps = targetValue - currentValue
+	} else {
+		neededSteps = currentValue - targetValue
+	}
+
+	for neededSteps {
+		//set value
+		//sleep duration / neededSteps
+	}
+
+}*/
+
+//calculateOpacity calculates the value of colorValue after applying some opacity
+func calculateOpacity(colorValue uint8, opacity uint8) uint8 {
+	var calculatedValue float32
+
+	if opacity != 100 {
+		calculatedValue = float32(colorValue) / 100 * float32(opacity)
+	} else {
+		calculatedValue = float32(colorValue)
+	}
+
+	return uint8(calculatedValue)
 }

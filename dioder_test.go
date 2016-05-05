@@ -53,8 +53,9 @@ func TestDioderPinConfiguration(t *testing.T) {
 }
 
 func TestDioderSetAll(t *testing.T) {
-	d := New(Pins{}, "/dev/pi-blaster")
+	d := New(Pins{}, piBlasterFile)
 
+	//All values at zero
 	d.SetAll(color.RGBA{})
 
 	if d.ColorConfiguration.A != 0 {
@@ -71,6 +72,19 @@ func TestDioderSetAll(t *testing.T) {
 
 	if d.ColorConfiguration.B != 0 {
 		t.Error("Blue is not correct")
+	}
+
+	d.SetAll(color.RGBA{255, 255, 255, 0})
+	if d.ColorConfiguration.R != 255 {
+		t.Errorf("Red is not correct after applying opacity of zero. Got: %d\n", d.ColorConfiguration.R)
+	}
+
+	if d.ColorConfiguration.G != 255 {
+		t.Errorf("Green is not correct after applying opacity of zero. Got: %d\n", d.ColorConfiguration.G)
+	}
+
+	if d.ColorConfiguration.B != 255 {
+		t.Errorf("Blue is not correct after applying opacity of zero. Got: %d\n", d.ColorConfiguration.B)
 	}
 }
 
