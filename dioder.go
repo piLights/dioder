@@ -46,22 +46,17 @@ func (d *Dioder) GetCurrentColor() color.RGBA {
 
 // SetAll sets the given values for the channels
 func (d *Dioder) SetAll(colorSet color.RGBA) {
+	d.ColorConfiguration = colorSet
 	//Red
-	if colorSet.R != d.ColorConfiguration.R {
-		d.SetChannelInteger(calculateOpacity(colorSet.R, colorSet.A), d.PinConfiguration.Red)
-	}
-
+	colorSet.R = calculateOpacity(colorSet.R, colorSet.A)
+	d.SetChannelInteger(colorSet.R, d.PinConfiguration.Red)
 	//Green
-	if colorSet.G != d.ColorConfiguration.G {
-		d.SetChannelInteger(calculateOpacity(colorSet.G, colorSet.A), d.PinConfiguration.Green)
-	}
+	colorSet.G = calculateOpacity(colorSet.G, colorSet.A)
+	d.SetChannelInteger(colorSet.G, d.PinConfiguration.Green)
 
 	//Blue
-	if colorSet.B != d.ColorConfiguration.B {
-		d.SetChannelInteger(calculateOpacity(colorSet.B, colorSet.A), d.PinConfiguration.Blue)
-	}
-
-	d.ColorConfiguration = colorSet
+	colorSet.B = calculateOpacity(colorSet.B, colorSet.A)
+	d.SetChannelInteger(colorSet.B, d.PinConfiguration.Blue)
 }
 
 //SetPins configures the pin-layout
