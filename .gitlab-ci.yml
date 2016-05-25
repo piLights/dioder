@@ -5,4 +5,5 @@ before_script:
   - "mkfifo /tmp/pi-blaster"
 
 Test:
-  - "go test -v ./..."
+    script:
+        - "go test -v ./..."
