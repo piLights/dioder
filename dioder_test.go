@@ -9,15 +9,19 @@ import (
 var piBlasterFile = "/tmp/pi-blaster"
 
 func TestNew(t *testing.T) {
-	d := New(Pins{}, "")
+	d := New(Pins{}, piBlasterFile, 0)
 
 	if reflect.TypeOf(d).String() != "dioder.Dioder" {
 		t.Errorf("Got wrong dioder.Dioder object: %s", reflect.TypeOf(d))
 	}
+
+	if d.FadeDuration != 0 {
+		t.Errorf("Got wrong duration. Gave 0, got %d", d.FadeDuration)
+	}
 }
 
 func TestDioderGetCurrentColor(t *testing.T) {
-	dioder := New(Pins{"18", "17", "4"}, piBlasterFile)
+	dioder := New(Pins{"18", "17", "4"}, piBlasterFile, 0)
 
 	colorSet := dioder.GetCurrentColor()
 
@@ -41,7 +45,7 @@ func TestDioderGetCurrentColor(t *testing.T) {
 func TestDioderPinConfiguration(t *testing.T) {
 	pinConfiguration := Pins{"18", "17", "4"}
 
-	dioder := New(pinConfiguration, piBlasterFile)
+	dioder := New(pinConfiguration, piBlasterFile, 0)
 
 	if dioder.PinConfiguration != pinConfiguration {
 		t.Errorf("Pins are not correctly configured. Gave %s, got %s", pinConfiguration, dioder.PinConfiguration)
@@ -53,7 +57,7 @@ func TestDioderPinConfiguration(t *testing.T) {
 }
 
 func TestDioderSetAll(t *testing.T) {
-	d := New(Pins{}, piBlasterFile)
+	d := New(Pins{}, piBlasterFile, 0)
 
 	//All values at zero
 	d.SetAll(color.RGBA{})
@@ -89,7 +93,7 @@ func TestDioderSetAll(t *testing.T) {
 }
 
 func TestDioderSetPins(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(Pins{"1", "2", "3"}, piBlasterFile, 0)
 
 	if d.PinConfiguration.Blue != "3" {
 		t.Error("Blue pin is not correct")
@@ -105,7 +109,7 @@ func TestDioderSetPins(t *testing.T) {
 }
 
 func TestDidoerTurnOff(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(Pins{"1", "2", "3"}, piBlasterFile, 0)
 
 	configuration := d.ColorConfiguration
 
@@ -117,7 +121,7 @@ func TestDidoerTurnOff(t *testing.T) {
 }
 
 func TestDioderTurnOn(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(Pins{"1", "2", "3"}, piBlasterFile, 0)
 
 	d.TurnOff()
 	d.TurnOn()

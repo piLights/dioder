@@ -9,6 +9,7 @@ import (
 	"image/color"
 	"os"
 	"strconv"
+	"time"
 )
 
 //Pins the numbers of the RGB-pins
@@ -23,10 +24,11 @@ type Dioder struct {
 	PinConfiguration   Pins
 	ColorConfiguration color.RGBA
 	PiBlaster          string
+	FadeDuration       time.Duration
 }
 
 //New creates a new instance
-func New(pinConfiguration Pins, piBlasterFile string) Dioder {
+func New(pinConfiguration Pins, piBlasterFile string, fadeDuration time.Duration) Dioder {
 	if piBlasterFile == "" {
 		piBlasterFile = "/dev/pi-blaster"
 	}
@@ -35,6 +37,7 @@ func New(pinConfiguration Pins, piBlasterFile string) Dioder {
 
 	d.SetPins(pinConfiguration)
 	d.PiBlaster = piBlasterFile
+	d.FadeDuration = fadeDuration
 
 	return d
 }
@@ -68,7 +71,14 @@ func (d *Dioder) SetPins(pinConfiguration Pins) {
 func (d *Dioder) TurnOff() {
 	//Temporary save the configuration
 	configuration := d.ColorConfiguration
-	d.SetAll(color.RGBA{})
+
+	fadeChan := make(chan color.RGBA)
+	fade(fadeChan, d.ColorConfiguration, color.RGBA{}, d.FadeDuration)
+
+	for fadeConfiguration := range fadeChan {
+		d.SetAll(fadeConfiguration)
+	}
+
 	d.ColorConfiguration = configuration
 }
 
@@ -83,7 +93,12 @@ func (d *Dioder) TurnOn() {
 	colorSet := d.ColorConfiguration
 	d.ColorConfiguration = color.RGBA{}
 
-	d.SetAll(colorSet)
+	fadeChan := make(chan color.RGBA)
+	fade(fadeChan, colorSet, d.ColorConfiguration, d.FadeDuration)
+
+	for fadeConfiguration := range fadeChan {
+		d.SetAll(fadeConfiguration)
+	}
 }
 
 func floatToString(floatValue float64) string {
@@ -149,6 +164,38 @@ func (d *Dioder) SetChannelInteger(value uint8, channel string) error {
 	}
 
 }*/
+
+func fade(fadeChan chan color.RGBA, oldColorSet, newColorSet color.RGBA, duration time.Duration) {
+
+	//Calculate the diference between all those values
+	//Red
+	redDifference := getDifference(oldColorSet.R, newColorSet.R)
+	greenDifference := getDifference(oldColorSet.G, newColorSet.G)
+	blueDifference := getDifference(oldColorSet.B, newColorSet.B)
+
+	average := (redDifference + greenDifference + blueDifference) / 3
+
+	sleepTimePerStep := (duration.Nanoseconds() / int64(time.Millisecond)) / int64(average)
+
+	for {
+		var partialFadedColorConfiguration color.RGBA
+
+		//Transition to the partial neew value
+
+		fadeChan <- partialFadedColorConfiguration
+
+		time.Sleep(time.Duration(sleepTimePerStep))
+	}
+	close(fadeChan)
+}
+
+func getDifference(a, b uint8) uint8 {
+	if a > b {
+		return a - b
+	} else {
+		return b - a
+	}
+}
 
 //calculateOpacity calculates the value of colorValue after applying some opacity
 func calculateOpacity(colorValue uint8, opacity uint8) uint8 {
