@@ -104,7 +104,7 @@ func TestDioderSetPins(t *testing.T) {
 	}
 }
 
-func TestDidoerTurnOff(t *testing.T) {
+func TestDioderTurnOff(t *testing.T) {
 	d := New(Pins{"1", "2", "3"}, piBlasterFile)
 
 	configuration := d.ColorConfiguration
