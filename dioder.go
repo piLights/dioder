@@ -132,6 +132,33 @@ func (d *Dioder) SetChannelInteger(value uint8, channel string) error {
 	return nil
 }
 
+//Release releases all used pins, so that they can be used in other applications
+func (d *Dioder) Release() {
+	piBlasterCommand := "release " + d.PinConfiguration.Red + "\n"
+	piBlasterCommand += "release " + d.PinConfiguration.Green + "\n"
+	piBlasterCommand += "release " + d.PinConfiguration.Blue + "\n"
+
+	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
+
+	if error != nil {
+		panic(error)
+	}
+
+	defer file.Close()
+
+	stream := bufio.NewWriter(file)
+
+	_, error = stream.WriteString(piBlasterCommand)
+
+	if error != nil {
+		panic(error)
+	}
+
+	stream.Flush()
+
+	return
+}
+
 /*func (d *Dioder) fade(currentValue uint8, targetValue uint8, fadeTime time.Duration, channel string) {
 	//Fade:
 	//Einteilung der Werteminderung pro Zeiteinheit anhand der Werte zwischen currentValue und targetValue
