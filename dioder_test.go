@@ -6,10 +6,10 @@ import (
 	"testing"
 )
 
-var piBlasterFile = "/tmp/pi-blaster"
+const tmpPiBlasterLocation = "/tmp/pi-blaster"
 
 func TestNew(t *testing.T) {
-	d := New(Pins{}, "")
+	d := New(Pins{}, tmpPiBlasterLocation)
 
 	if reflect.TypeOf(d).String() != "dioder.Dioder" {
 		t.Errorf("Got wrong dioder.Dioder object: %s", reflect.TypeOf(d))
@@ -17,7 +17,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestDioderGetCurrentColor(t *testing.T) {
-	dioder := New(Pins{"18", "17", "4"}, piBlasterFile)
+	dioder := New(Pins{"18", "17", "4"}, tmpPiBlasterLocation)
 
 	colorSet := dioder.GetCurrentColor()
 
@@ -41,19 +41,19 @@ func TestDioderGetCurrentColor(t *testing.T) {
 func TestDioderPinConfiguration(t *testing.T) {
 	pinConfiguration := Pins{"18", "17", "4"}
 
-	dioder := New(pinConfiguration, piBlasterFile)
+	dioder := New(pinConfiguration, tmpPiBlasterLocation)
 
 	if dioder.PinConfiguration != pinConfiguration {
 		t.Errorf("Pins are not correctly configured. Gave %s, got %s", pinConfiguration, dioder.PinConfiguration)
 	}
 
-	if dioder.PiBlaster != piBlasterFile {
-		t.Errorf("Pi-Blaster file wrong configured. Gave %s, got %s", piBlasterFile, dioder.PiBlaster)
+	if dioder.PiBlaster != tmpPiBlasterLocation {
+		t.Errorf("Pi-Blaster file wrong configured. Gave %s, got %s", tmpPiBlasterLocation, dioder.PiBlaster)
 	}
 }
 
 func TestDioderSetAll(t *testing.T) {
-	d := New(Pins{}, piBlasterFile)
+	d := New(Pins{}, tmpPiBlasterLocation)
 
 	//All values at zero
 	d.SetAll(color.RGBA{})
@@ -89,7 +89,7 @@ func TestDioderSetAll(t *testing.T) {
 }
 
 func TestDioderSetPins(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(Pins{"1", "2", "3"}, tmpPiBlasterLocation)
 
 	if d.PinConfiguration.Blue != "3" {
 		t.Error("Blue pin is not correct")
@@ -105,7 +105,7 @@ func TestDioderSetPins(t *testing.T) {
 }
 
 func TestDioderTurnOff(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(Pins{"1", "2", "3"}, tmpPiBlasterLocation)
 
 	configuration := d.ColorConfiguration
 
@@ -117,7 +117,7 @@ func TestDioderTurnOff(t *testing.T) {
 }
 
 func TestDioderTurnOn(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(Pins{"1", "2", "3"}, tmpPiBlasterLocation)
 
 	d.TurnOff()
 	d.TurnOn()

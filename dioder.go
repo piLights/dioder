@@ -27,6 +27,7 @@ type Dioder struct {
 	PinConfiguration   Pins
 	ColorConfiguration color.RGBA
 	PiBlaster          string
+	File               *os.File
 }
 
 //New creates a new instance
@@ -39,6 +40,12 @@ func New(pinConfiguration Pins, piBlasterFile string) Dioder {
 
 	d.SetPins(pinConfiguration)
 	d.PiBlaster = piBlasterFile
+
+	var err error
+	d.File, err = os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
+	if err != nil {
+		panic(err)
+	}
 
 	return d
 }
@@ -91,7 +98,7 @@ func (d *Dioder) TurnOn() {
 	}
 
 	//@ToDo: Refactor
-	//Ugliy hack, to turn the lights back on
+	//Ugly hack, to turn the lights back on
 	colorSet := d.ColorConfiguration
 	d.ColorConfiguration = color.RGBA{}
 
@@ -106,20 +113,11 @@ func floatToString(floatValue float64) string {
 func (d *Dioder) SetColor(channel string, value float64) error {
 	piBlasterCommand := channel + "=" + floatToString(value) + "\n"
 
-	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
+	stream := bufio.NewWriter(d.File)
 
-	if error != nil {
-		panic(error)
-	}
-
-	defer file.Close()
-
-	stream := bufio.NewWriter(file)
-
-	_, error = stream.WriteString(piBlasterCommand)
-
-	if error != nil {
-		panic(error)
+	_, err := stream.WriteString(piBlasterCommand)
+	if err != nil {
+		panic(err)
 	}
 
 	stream.Flush()
@@ -153,23 +151,16 @@ func (d *Dioder) Release() {
 	piBlasterCommand += "release " + d.PinConfiguration.Green + "\n"
 	piBlasterCommand += "release " + d.PinConfiguration.Blue + "\n"
 
-	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
+	stream := bufio.NewWriter(d.File)
 
-	if error != nil {
-		panic(error)
-	}
-
-	defer file.Close()
-
-	stream := bufio.NewWriter(file)
-
-	_, error = stream.WriteString(piBlasterCommand)
-
-	if error != nil {
-		panic(error)
+	_, err := stream.WriteString(piBlasterCommand)
+	if err != nil {
+		panic(err)
 	}
 
 	stream.Flush()
+
+	d.File.Close()
 
 	return
 }
