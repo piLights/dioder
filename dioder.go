@@ -9,7 +9,10 @@ import (
 	"image/color"
 	"os"
 	"strconv"
+	"sync"
 )
+
+const piBlasterLocation = "/dev/pi-blaster"
 
 //Pins the numbers of the RGB-pins
 type Pins struct {
@@ -20,6 +23,7 @@ type Pins struct {
 
 //Dioder the main structure
 type Dioder struct {
+	sync.Mutex
 	PinConfiguration   Pins
 	ColorConfiguration color.RGBA
 	PiBlaster          string
@@ -28,7 +32,7 @@ type Dioder struct {
 //New creates a new instance
 func New(pinConfiguration Pins, piBlasterFile string) Dioder {
 	if piBlasterFile == "" {
-		piBlasterFile = "/dev/pi-blaster"
+		piBlasterFile = piBlasterLocation
 	}
 
 	d := Dioder{}
@@ -41,11 +45,16 @@ func New(pinConfiguration Pins, piBlasterFile string) Dioder {
 
 // GetCurrentColor returns the current color
 func (d *Dioder) GetCurrentColor() color.RGBA {
+	d.Lock()
+	defer d.Unlock()
 	return d.ColorConfiguration
 }
 
 // SetAll sets the given values for the channels
 func (d *Dioder) SetAll(colorSet color.RGBA) {
+	d.Lock()
+	defer d.Unlock()
+
 	d.ColorConfiguration = colorSet
 	//Red
 	colorSet.R = calculateOpacity(colorSet.R, colorSet.A)
@@ -61,11 +70,17 @@ func (d *Dioder) SetAll(colorSet color.RGBA) {
 
 //SetPins configures the pin-layout
 func (d *Dioder) SetPins(pinConfiguration Pins) {
+	d.Lock()
+	defer d.Unlock()
+
 	d.PinConfiguration = pinConfiguration
 }
 
 //TurnOff turns off the dioder-strips and saves the current configuration
 func (d *Dioder) TurnOff() {
+	d.Lock()
+	defer d.Unlock()
+
 	//Temporary save the configuration
 	configuration := d.ColorConfiguration
 	d.SetAll(color.RGBA{})
@@ -74,6 +89,9 @@ func (d *Dioder) TurnOff() {
 
 //TurnOn turns the dioder-strips on and restores the previous configuration
 func (d *Dioder) TurnOn() {
+	d.Lock()
+	defer d.Unlock()
+
 	if d.ColorConfiguration.A == 0 && d.ColorConfiguration.B == 0 && d.ColorConfiguration.G == 0 && d.ColorConfiguration.R == 0 {
 		d.ColorConfiguration = color.RGBA{255, 255, 255, 100}
 	}
@@ -92,6 +110,9 @@ func floatToString(floatValue float64) string {
 
 //SetColor Sets a color on the given channel
 func (d *Dioder) SetColor(channel string, value float64) error {
+	d.Lock()
+	defer d.Unlock()
+
 	piBlasterCommand := channel + "=" + floatToString(value) + "\n"
 
 	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
@@ -134,6 +155,9 @@ func (d *Dioder) SetChannelInteger(value uint8, channel string) error {
 
 //Release releases all used pins, so that they can be used in other applications
 func (d *Dioder) Release() {
+	d.Lock()
+	defer d.Unlock()
+
 	piBlasterCommand := "release " + d.PinConfiguration.Red + "\n"
 	piBlasterCommand += "release " + d.PinConfiguration.Green + "\n"
 	piBlasterCommand += "release " + d.PinConfiguration.Blue + "\n"
