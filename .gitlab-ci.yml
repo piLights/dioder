@@ -6,4 +6,4 @@ before_script:
 
 Test:
     script:
-        - "go test -v ./..."
+        - "go test -cover -v ./..."
