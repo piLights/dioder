@@ -78,9 +78,6 @@ func (d *Dioder) SetPins(pinConfiguration Pins) {
 
 //TurnOff turns off the dioder-strips and saves the current configuration
 func (d *Dioder) TurnOff() {
-	d.Lock()
-	defer d.Unlock()
-
 	//Temporary save the configuration
 	configuration := d.ColorConfiguration
 	d.SetAll(color.RGBA{})
@@ -89,9 +86,6 @@ func (d *Dioder) TurnOff() {
 
 //TurnOn turns the dioder-strips on and restores the previous configuration
 func (d *Dioder) TurnOn() {
-	d.Lock()
-	defer d.Unlock()
-
 	if d.ColorConfiguration.A == 0 && d.ColorConfiguration.B == 0 && d.ColorConfiguration.G == 0 && d.ColorConfiguration.R == 0 {
 		d.ColorConfiguration = color.RGBA{255, 255, 255, 100}
 	}
@@ -110,9 +104,6 @@ func floatToString(floatValue float64) string {
 
 //SetColor Sets a color on the given channel
 func (d *Dioder) SetColor(channel string, value float64) error {
-	d.Lock()
-	defer d.Unlock()
-
 	piBlasterCommand := channel + "=" + floatToString(value) + "\n"
 
 	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
