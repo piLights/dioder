@@ -165,24 +165,6 @@ func (d *Dioder) Release() {
 	return
 }
 
-/*func (d *Dioder) fade(currentValue uint8, targetValue uint8, fadeTime time.Duration, channel string) {
-	//Fade:
-	//Einteilung der Werteminderung pro Zeiteinheit anhand der Werte zwischen currentValue und targetValue
-	var neededSteps uint8
-
-	if currentValue < targetValue {
-		neededSteps = targetValue - currentValue
-	} else {
-		neededSteps = currentValue - targetValue
-	}
-
-	for neededSteps {
-		//set value
-		//sleep duration / neededSteps
-	}
-
-}*/
-
 //calculateOpacity calculates the value of colorValue after applying some opacity
 func calculateOpacity(colorValue uint8, opacity uint8) uint8 {
 	var calculatedValue float32
