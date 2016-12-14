@@ -16,9 +16,9 @@ const piBlasterLocation = "/dev/pi-blaster"
 
 //Pins the numbers of the RGB-pins
 type Pins struct {
-	Red   int32
-	Green int32
-	Blue  int32
+	Red   int
+	Green int
+	Blue  int
 }
 
 //Dioder the main structure
@@ -103,7 +103,7 @@ func floatToString(floatValue float64) string {
 }
 
 //SetColor Sets a color on the given channel
-func (d *Dioder) SetColor(channel int32, value float64) error {
+func (d *Dioder) SetColor(channel int, value float64) error {
 	piBlasterCommand := fmt.Sprintf("%d=%s\n", channel, floatToString(value))
 
 	file, err := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
@@ -128,7 +128,7 @@ func (d *Dioder) SetColor(channel int32, value float64) error {
 }
 
 //SetChannelInteger check if the value is in the correct range and convert it to float64
-func (d *Dioder) SetChannelInteger(value uint8, channel int32) error {
+func (d *Dioder) SetChannelInteger(value uint8, channel int) error {
 	floatval := float64(value) / 255.0
 
 	err := d.SetColor(channel, float64(floatval))
