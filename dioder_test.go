@@ -6,7 +6,14 @@ import (
 	"testing"
 )
 
-var piBlasterFile = "/tmp/pi-blaster"
+var (
+	piBlasterFile = "/tmp/pi-blaster"
+	pinConfiguration = Pins{
+		Red: 1,
+		Green: 2,
+		Blue: 3,
+	}
+)
 
 func TestNew(t *testing.T) {
 	d := New(Pins{}, "")
@@ -17,7 +24,7 @@ func TestNew(t *testing.T) {
 }
 
 func TestDioderGetCurrentColor(t *testing.T) {
-	dioder := New(Pins{"18", "17", "4"}, piBlasterFile)
+	dioder := New(pinConfiguration, piBlasterFile)
 
 	colorSet := dioder.GetCurrentColor()
 
@@ -39,8 +46,6 @@ func TestDioderGetCurrentColor(t *testing.T) {
 }
 
 func TestDioderPinConfiguration(t *testing.T) {
-	pinConfiguration := Pins{"18", "17", "4"}
-
 	dioder := New(pinConfiguration, piBlasterFile)
 
 	if dioder.PinConfiguration != pinConfiguration {
@@ -89,23 +94,23 @@ func TestDioderSetAll(t *testing.T) {
 }
 
 func TestDioderSetPins(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(pinConfiguration, piBlasterFile)
 
-	if d.PinConfiguration.Blue != "3" {
+	if d.PinConfiguration.Blue != 3 {
 		t.Error("Blue pin is not correct")
 	}
 
-	if d.PinConfiguration.Green != "2" {
+	if d.PinConfiguration.Green != 2 {
 		t.Error("Green pin is not correct")
 	}
 
-	if d.PinConfiguration.Red != "1" {
+	if d.PinConfiguration.Red != 1 {
 		t.Error("Red pin is not correct")
 	}
 }
 
 func TestDioderTurnOff(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(pinConfiguration, piBlasterFile)
 
 	configuration := d.ColorConfiguration
 
@@ -117,7 +122,7 @@ func TestDioderTurnOff(t *testing.T) {
 }
 
 func TestDioderTurnOn(t *testing.T) {
-	d := New(Pins{"1", "2", "3"}, piBlasterFile)
+	d := New(pinConfiguration, piBlasterFile)
 
 	d.TurnOff()
 	d.TurnOn()

@@ -10,15 +10,16 @@ import (
 	"os"
 	"strconv"
 	"sync"
+	"fmt"
 )
 
 const piBlasterLocation = "/dev/pi-blaster"
 
 //Pins the numbers of the RGB-pins
 type Pins struct {
-	Red   string
-	Green string
-	Blue  string
+	Red   int32
+	Green int32
+	Blue  int32
 }
 
 //Dioder the main structure
@@ -103,8 +104,8 @@ func floatToString(floatValue float64) string {
 }
 
 //SetColor Sets a color on the given channel
-func (d *Dioder) SetColor(channel string, value float64) error {
-	piBlasterCommand := channel + "=" + floatToString(value) + "\n"
+func (d *Dioder) SetColor(channel int32, value float64) error {
+	piBlasterCommand := fmt.Sprintf("%d=%s\n", channel, floatToString(value))
 
 	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
 
@@ -128,7 +129,7 @@ func (d *Dioder) SetColor(channel string, value float64) error {
 }
 
 //SetChannelInteger check if the value is in the correct range and convert it to float64
-func (d *Dioder) SetChannelInteger(value uint8, channel string) error {
+func (d *Dioder) SetChannelInteger(value uint8, channel int32) error {
 	if value > 255 {
 		return errors.New("Value can not be over 255")
 	}
@@ -149,9 +150,9 @@ func (d *Dioder) Release() {
 	d.Lock()
 	defer d.Unlock()
 
-	piBlasterCommand := "release " + d.PinConfiguration.Red + "\n"
-	piBlasterCommand += "release " + d.PinConfiguration.Green + "\n"
-	piBlasterCommand += "release " + d.PinConfiguration.Blue + "\n"
+	piBlasterCommand := fmt.Sprintf("release %d\n", d.PinConfiguration.Red)
+	piBlasterCommand += fmt.Sprintf("release %d\n", d.PinConfiguration.Green)
+	piBlasterCommand += fmt.Sprintf("release %d\n", d.PinConfiguration.Blue)
 
 	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
 
