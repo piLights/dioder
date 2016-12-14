@@ -149,3 +149,19 @@ func TestDioder_SetChannelInteger(t *testing.T) {
 		t.Errorf("Error: %s", err)
 	}
 }
+
+func TestDioder_SetColor(t *testing.T) {
+	d := New(pinConfiguration, "nonExistentFile")
+
+	err := d.SetColor(0, 0)
+	if err == nil {
+		t.Error("Called with an non existent filename. SetColor() should return an error")
+	}
+
+	d.PiBlaster = piBlasterFile
+
+	err = d.SetColor(0, 0)
+	if err != nil {
+		t.Errorf("Returned an error: %s", err)
+	}
+}
