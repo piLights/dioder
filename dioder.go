@@ -5,7 +5,6 @@ package dioder
 
 import (
 	"bufio"
-	"errors"
 	"image/color"
 	"os"
 	"strconv"
@@ -130,19 +129,10 @@ func (d *Dioder) SetColor(channel int32, value float64) error {
 
 //SetChannelInteger check if the value is in the correct range and convert it to float64
 func (d *Dioder) SetChannelInteger(value uint8, channel int32) error {
-	if value > 255 {
-		return errors.New("Value can not be over 255")
-	}
-
-	if value < 0 {
-		return errors.New("Value can not be under 0")
-	}
-
 	floatval := float64(value) / 255.0
 
-	d.SetColor(channel, float64(floatval))
-
-	return nil
+	err := d.SetColor(channel, float64(floatval))
+	return err
 }
 
 //Release releases all used pins, so that they can be used in other applications

@@ -140,3 +140,12 @@ func TestDioderTurnOn(t *testing.T) {
 		t.Errorf("Value for blue is wrong. Expected 0, got %d", d.ColorConfiguration.B)
 	}
 }
+
+func TestDioder_SetChannelInteger(t *testing.T) {
+	d := New(pinConfiguration, piBlasterFile)
+
+	err := d.SetChannelInteger(255, 1)
+	if err != nil {
+		t.Errorf("Error: %s", err)
+	}
+}
