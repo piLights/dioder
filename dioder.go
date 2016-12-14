@@ -107,20 +107,20 @@ func floatToString(floatValue float64) string {
 func (d *Dioder) SetColor(channel int32, value float64) error {
 	piBlasterCommand := fmt.Sprintf("%d=%s\n", channel, floatToString(value))
 
-	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
+	file, err := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
 
-	if error != nil {
-		panic(error)
+	if err != nil {
+		return err
 	}
 
 	defer file.Close()
 
 	stream := bufio.NewWriter(file)
 
-	_, error = stream.WriteString(piBlasterCommand)
+	_, err = stream.WriteString(piBlasterCommand)
 
-	if error != nil {
-		panic(error)
+	if err != nil {
+		return err
 	}
 
 	stream.Flush()
@@ -146,7 +146,7 @@ func (d *Dioder) SetChannelInteger(value uint8, channel int32) error {
 }
 
 //Release releases all used pins, so that they can be used in other applications
-func (d *Dioder) Release() {
+func (d *Dioder) Release() error {
 	d.Lock()
 	defer d.Unlock()
 
@@ -154,25 +154,25 @@ func (d *Dioder) Release() {
 	piBlasterCommand += fmt.Sprintf("release %d\n", d.PinConfiguration.Green)
 	piBlasterCommand += fmt.Sprintf("release %d\n", d.PinConfiguration.Blue)
 
-	file, error := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
+	file, err := os.OpenFile(d.PiBlaster, os.O_RDWR, os.ModeNamedPipe)
 
-	if error != nil {
-		panic(error)
+	if err != nil {
+		return err
 	}
 
 	defer file.Close()
 
 	stream := bufio.NewWriter(file)
 
-	_, error = stream.WriteString(piBlasterCommand)
+	_, err = stream.WriteString(piBlasterCommand)
 
-	if error != nil {
-		panic(error)
+	if err != nil {
+		return err
 	}
 
 	stream.Flush()
 
-	return
+	return nil
 }
 
 /*func (d *Dioder) fade(currentValue uint8, targetValue uint8, fadeTime time.Duration, channel string) {
