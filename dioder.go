@@ -57,14 +57,10 @@ func (d *Dioder) SetAll(colorSet color.RGBA) {
 
 	d.ColorConfiguration = colorSet
 	//Red
-	colorSet.R = calculateOpacity(colorSet.R, colorSet.A)
 	d.SetChannelInteger(colorSet.R, d.PinConfiguration.Red)
 	//Green
-	colorSet.G = calculateOpacity(colorSet.G, colorSet.A)
 	d.SetChannelInteger(colorSet.G, d.PinConfiguration.Green)
-
 	//Blue
-	colorSet.B = calculateOpacity(colorSet.B, colorSet.A)
 	d.SetChannelInteger(colorSet.B, d.PinConfiguration.Blue)
 }
 
@@ -86,8 +82,12 @@ func (d *Dioder) TurnOff() {
 
 //TurnOn turns the dioder-strips on and restores the previous configuration
 func (d *Dioder) TurnOn() {
-	if d.ColorConfiguration.A == 0 && d.ColorConfiguration.B == 0 && d.ColorConfiguration.G == 0 && d.ColorConfiguration.R == 0 {
-		d.ColorConfiguration = color.RGBA{255, 255, 255, 100}
+	if d.ColorConfiguration.B == 0 && d.ColorConfiguration.G == 0 && d.ColorConfiguration.R == 0 {
+		d.ColorConfiguration = color.RGBA{
+			R: 255,
+			G: 255,
+			B: 255,
+		}
 	}
 
 	//@ToDo: Refactor
@@ -182,16 +182,3 @@ func (d *Dioder) Release() error {
 	}
 
 }*/
-
-//calculateOpacity calculates the value of colorValue after applying some opacity
-func calculateOpacity(colorValue uint8, opacity uint8) uint8 {
-	var calculatedValue float32
-
-	if opacity != 100 {
-		calculatedValue = float32(colorValue) / 100 * float32(opacity)
-	} else {
-		calculatedValue = float32(colorValue)
-	}
-
-	return uint8(calculatedValue)
-}

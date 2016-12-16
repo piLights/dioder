@@ -127,17 +127,14 @@ func TestDioderTurnOn(t *testing.T) {
 	d.TurnOff()
 	d.TurnOn()
 
-	if d.ColorConfiguration.A != 100 {
-		t.Errorf("Value for opacity is wrong. Expected 0, got %d", d.ColorConfiguration.A)
-	}
 	if d.ColorConfiguration.R != 255 {
-		t.Errorf("Value for red is wrong. Expected 0, got %d", d.ColorConfiguration.R)
+		t.Errorf("Value for red is wrong. Expected 255, got %d", d.ColorConfiguration.R)
 	}
 	if d.ColorConfiguration.G != 255 {
-		t.Errorf("Value for green is wrong. Expected 0, got %d", d.ColorConfiguration.G)
+		t.Errorf("Value for green is wrong. Expected 255, got %d", d.ColorConfiguration.G)
 	}
 	if d.ColorConfiguration.B != 255 {
-		t.Errorf("Value for blue is wrong. Expected 0, got %d", d.ColorConfiguration.B)
+		t.Errorf("Value for blue is wrong. Expected 255, got %d", d.ColorConfiguration.B)
 	}
 }
 
